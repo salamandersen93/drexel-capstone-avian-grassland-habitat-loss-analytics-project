@@ -1,4 +1,4 @@
-# DSCI521_Capstone_Avian_Farmland_Data_Analysis
+# drexel-capstone-avian-grassland-habitat-loss-analytics-project
 
 <h2> Correlation, Linear Regression, and Network Analysis of Ornithological Citizen Science Data and USDA Agricultural Census Data: Grassland Bird Species</h2>
 
