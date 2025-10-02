@@ -1,37 +1,104 @@
-# drexel-capstone-avian-grassland-habitat-loss-analytics-project
+# Grassland Bird Population Analytics: Agricultural Impact Assessment
 
-<h2> Correlation, Linear Regression, and Network Analysis of Ornithological Citizen Science Data and USDA Agricultural Census Data: Grassland Bird Species</h2>
+> Correlation, Linear Regression, and Network Analysis of Ornithological Citizen Science Data and USDA Agricultural Census Data
 
-<h3> Background: </h3> Grassland bird species have sufferred a staggering 40% decline in population since 1966 due to a combination of habitat loss from climate change and conversion of native prairie grasslands to agricultural land. Understanding the population dynamics of these species and how they respond to changes in agricultural practice and methodologies could be a critical step in refining conservation efforts and a brighter future for species of critical concern.<br>
+---
 
-The dataset in this project was constructed as part of a Udacity Data Engineering nanodegree using python and postgreSQL. This analysis (DSCI 521 project) is a continuation of that work, and will leverage a set of techniques including correlation analysis, linear regression, and network analysis to drill into the data. The intention of this analysis is to bring to light trends which could be used to inform conservation actions by policymakers and agricultural organizations. For example, could decreasing treatment of cropland with pesticides in a given county help a given species rebound? Could incentivizing conversion of cropland to pastureland result in increased populations of a given species of critical conservation concern? 
+## Overview
 
-<h3> Dataset Summary: </h3> To briefly summarize the efforts of dataset origins preceding this project: The original dataset is a merging of eBird observation data and USDA 2017 agricultural census data. eBird is a citizen science initiative owned by the Cornell Lab of Ornithology which allows birdwatchers and citizen scientists around the world to track their bird observations, including date/time, species counts, checklists comments, and other metadata. Data was acquired using an API key for 16 species which were manually selected based on subject matter knowledge and guidance from the 2019 Audubon Grassland Species Report. The date range was all months of the year 2017 and the geographical range was limited to the continental USA. USDA agricultural census data was downloaded from the USDA website and filtered to include relevant features, which are detailed in the data model below. The datasets were cleaned, wrangled, and merged to construct the data in a star schema, with an 'observation' table as the central fact table and dimension tables including checklist details, species details, FIPS details, and agricultural features.
+This project investigates the relationship between agricultural practices and grassland bird population dynamics across the continental United States. Grassland bird species have suffered a staggering 40% decline in population since 1966 due to habitat loss from climate change and conversion of native prairie grasslands to agricultural land. Understanding how these species respond to changes in agricultural practices is critical for refining conservation efforts and informing policy decisions.
 
-<h3>Data Model:::</h3><br>
+The analysis employs correlation analysis, linear regression modeling, and network analysis techniques to identify actionable trends that could inform conservation strategies by policymakers and agricultural organizations.
 
-<b>Observation Table (Fact Table) ~3 million rows</b>
+---
+
+## Research Questions
+
+This analysis addresses four core questions designed to illuminate the complex relationships between agricultural practices and grassland bird populations:
+
+### 1. Habitat Preference Analysis
+**Are certain species observed in higher quantities in regions with more pastureland, cropland, irrigated land, or land in farms?**
+
+Understanding which species favor particular habitats can help target conservation efforts to the most effective geographic locations and land types.
+
+### 2. Chemical Treatment Impact
+**Do species observation quantities exhibit any relationships with the use of chemicals on cropland to control insects, nematodes, growth, weeds/grasses, or disease?**
+
+This analysis aims to uncover hidden complexities in how agricultural chemical usage affects bird populations, potentially informing recommendations for modified agricultural practices.
+
+### 3. Conservation Program Efficacy
+**Do counties with higher rates of enrollment in conservation programs have higher populations of grassland-dependent species?**
+
+Evaluating whether existing conservation efforts have made observable impacts on species populations can inform the effectiveness and future direction of conservation investments.
+
+### 4. Species Co-occurrence Patterns
+**Are there certain clusters of species which tend to associate together in the same habitats or regions?**
+
+Identifying species that co-occur could streamline conservation efforts by targeting multiple species simultaneously and revealing shared habitat requirements.
+
+---
+
+## Dataset Construction
+
+### Data Sources
+
+**eBird Citizen Science Data**
+- Source: Cornell Lab of Ornithology's eBird initiative
+- Temporal scope: All months of 2017
+- Geographic scope: Continental United States
+- Acquisition method: API access
+- Species selection: 16 species manually selected based on subject matter expertise and guidance from the 2019 Audubon Grassland Species Report
+- Data elements: Date/time, species counts, checklist metadata, geographic coordinates
+
+**USDA Agricultural Census Data**
+- Source: USDA 2017 Agricultural Census
+- Acquisition method: Direct download from USDA website
+- Geographic resolution: County level (FIPS codes)
+- Focus: Agricultural practices and land use patterns relevant to grassland habitat
+
+### Data Engineering Pipeline
+
+The dataset was constructed as part of a Udacity Data Engineering nanodegree using Python and PostgreSQL. The engineering process involved:
+
+1. API-based extraction of eBird observation data for target species
+2. Download and filtering of USDA agricultural census data
+3. Data cleaning and validation
+4. Geographic alignment using FIPS codes
+5. Schema design and implementation in star schema format
+6. ETL pipeline execution for data integration
+
+The resulting integrated dataset merges ornithological citizen science observations with comprehensive agricultural practice metrics at the county level, enabling analysis of relationships between farming practices and bird populations.
+
+---
+
+## Data Model
+
+The dataset is structured as a star schema optimized for analytical queries:
+
+### Observation Table (Fact Table)
+**~3 million rows**
+
 - Species Common Name
 - Observation Count
 - Sampling Event ID
-- FIPS Code 
-- Observation ID
-
-
-<b>FIPS Table (Dimension)</b>
 - FIPS Code
+- Observation ID (Primary Key)
+
+### FIPS Table (Dimension)
+
+- FIPS Code (Primary Key)
 - County Name
 - State Name
 
+### Agricultural Features Table (Dimension)
 
-<b>Agricultural Table (Dimension)</b>
-- FIPS_code: FIPS code (geographic information data)
+- FIPS Code (Primary Key, Foreign Key to Observation)
 - Acres of Land in Farms as Percent of Land Area in Acres: 2017
 - Acres of Irrigated Land as Percent of Land in Farms Acreage: 2017
 - Acres of Total Cropland as Percent of Land Area in Acres: 2017
 - Acres of Harvested Cropland as Percent of Land in Farms Acreage: 2017
 - Acres of All Types of Pastureland as Percent of Land in Farms Acreage: 2017
-- Acres Enrolled in the Conservation Reserve, Wetlands Reserve, Farmable Wetlands, or Conservation Reserve Enhancement Programs as Percent of Land in Farms Acreage: 2017
+- Acres Enrolled in Conservation Programs (CRP, WRP, Farmable Wetlands, CREP) as Percent of Land in Farms Acreage: 2017
 - Acres of Cropland and Pastureland Treated with Animal Manure as Percent of Total Cropland Acreage: 2017
 - Acres Treated with Chemicals to Control Insects as Percent of Total Cropland Acreage: 2017
 - Acres Treated with Chemicals to Control Nematodes as Percent of Total Cropland Acreage: 2017
@@ -39,14 +106,17 @@ The dataset in this project was constructed as part of a Udacity Data Engineerin
 - Acres of Crops Treated with Chemicals to Control Growth, Thin Fruit, Ripen, or Defoliate as Percent of Total Cropland Acreage: 2017
 - Acres Treated with Chemicals to Control Disease in Crops and Orchards as Percent of Total Cropland Acreage: 2017
 
+### Species Taxonomy Table (Dimension)
+*Not included in primary analysis*
 
-<b>Species Taxonomy Data (Dimension) -- not included in this analysis </b>
-- Species Common Name
+- Species Common Name (Primary Key)
 - Species Scientific Name
 - Species Taxonomic Order
 
-<b>Sampling Event Table (Dimension) -- not included in this analysis </b>
-- Sampling Event ID
+### Sampling Event Table (Dimension)
+*Not included in primary analysis*
+
+- Sampling Event ID (Primary Key)
 - Event Date
 - Latitude
 - Longitude
@@ -56,21 +126,283 @@ The dataset in this project was constructed as part of a Udacity Data Engineerin
 - Sampling Event Distance
 - Sampling Event Duration
 
-<b> IMPORTANT NOTE: THE DATASET EXCEEDS GITHUB LIMITS. PLEASE EMAIL DIRECTLY AT MA3775@DREXEL.EDU FOR FILES USED IN THIS ANALYSIS</B>
+---
 
-<h2> Exploratory Data Analysis and Project Scoping </h2>
+## Analytical Methodology
 
-Project scoping and exploratory data analysis can be found in scoping_and_EDA.pynb. This preliminary analysis included dataset evaluation and structural description of features, outlier detection, data quality checks, missing data checks and imputations, as well as some exploratory data analysis including higher level correlation analysis (non-numerical) and visualization of trends in the dataset. The exploratory data analysis phase let to the formulation of four core questions to drive the analysis phase of the project:
+### Phase 1: Exploratory Data Analysis
 
-1. Are certain species observed in higher quantities in regions with more pastureland, cropland, irrigated land, or land in farms? This question could help to understand which species favor particular habitats and could help to inform locale of conservation efforts.
-2. Do species observation quantities exhibit any relationships with the use of chemicals on cropland to control insects, nematodes, growth, weeds/grasses, or disease? Understanding these dynamics could bring hidden complexities to light and inform conservation decisions or incentivize certain agricultural practices.
-3. Do counties with higher rates of enrollment in conservation programs have higher populations of grassland-dependent species? Understanding whether existing efforts to date have made an observable impact on species populations could inform future conservation decisions.
-4. Are there certain clusters of species which tend to associate together in the same habitats or regions? Understanding this dynamic could help to drive the more granular aspects of conservation efforts and streamline efforts to include multiple species where feasible.
+**Location:** `scoping_and_EDA.ipynb`
 
-<h2> Data Analytics Phase </h2>
+The exploratory phase established data quality baselines and informed the analytical approach:
 
-The data analysis (correlations, linear regression, and network analysis) portion can be find in the analytics_implementation.pynb file. All visualizations are included in the notebook files and not as separate images. The notebook file contains in-depth discussion of the findings, including hypothesis development and result interpretation for each of the four core questions described above.
+**Data Quality Assessment**
+- Structural description and feature characterization
+- Outlier detection and treatment strategies
+- Missing data identification and imputation methods
+- Data validation and integrity checks
 
-<b> A note on limitations and shortcomings of the data: </b> There is an inherit bias to the dataset which significantly impacts correlations and model performance. The eBird data is directly reflected by the human population and number of individuals logging checklists on eBird. Thus, areas with more individuals logging eBird checklists will appear to have higher populations of species. In future works, it may be possible to weight models by the number of unique eBird observer IDs in a given county, however the data is still limited in the sense that only 16 species were included in the dataset. A complete dataset of every sampling event would be needed to gain truly accurate models of species population dynamics. Additionally, the data is limited in scope to the year 2017 and geographically to the continental USA. Expanding this to a multi-year approach could enable time series analysis of the dataset, but dataset construction would increase computational cost significantly (even with constructing the dataset on AWS using high performance clusters, compiliation of the dataset took several hours to run).
+**Preliminary Analysis**
+- High-level correlation analysis across features
+- Distribution visualization of key variables
+- Geographic patterns in observation data
+- Initial hypothesis formulation
 
+**Outcomes:**
+- Identification of the four core research questions
+- Feature selection for analytical models
+- Data transformation requirements
+- Quality assurance protocols
 
+### Phase 2: Statistical Analysis
+
+**Location:** `analytics_implementation.ipynb`
+
+The analytical phase employs three complementary methodologies:
+
+**Correlation Analysis**
+- Pearson correlation coefficients between agricultural features and species observations
+- Statistical significance testing
+- Identification of strong positive/negative relationships
+- Multi-species comparison of correlation patterns
+
+**Linear Regression Modeling**
+- Species observation counts as dependent variables
+- Agricultural features as independent variables
+- Model performance evaluation (R², adjusted R², RMSE)
+- Coefficient interpretation for actionable insights
+- Residual analysis and assumption validation
+
+**Network Analysis**
+- Species co-occurrence network construction
+- Community detection algorithms
+- Centrality measures for key species identification
+- Habitat association clusters
+
+---
+
+## Project Structure and Module Integration
+
+### `scoping_and_EDA.ipynb`
+**Purpose:** Exploratory data analysis and project scoping
+
+**Key Functions:**
+- Data loading and initial inspection
+- Statistical summaries and distributions
+- Missing data analysis and imputation
+- Outlier detection and treatment
+- Feature engineering and transformation
+- Preliminary visualization of trends
+
+**Integration Role:** Establishes data quality baselines, informs feature selection for analytical models, and generates research questions that drive subsequent analysis.
+
+### `analytics_implementation.ipynb`
+**Purpose:** Primary analytical implementation
+
+**Key Functions:**
+- Correlation matrix generation and visualization
+- Linear regression model development and evaluation
+- Network graph construction and analysis
+- Hypothesis testing for each research question
+- Result interpretation and discussion
+- Visualization of findings
+
+**Integration Role:** Executes statistical analyses on cleaned data from EDA phase, produces actionable insights, and generates visualizations for interpretation.
+
+---
+
+## Analytical Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    DATA ACQUISITION                             │
+│                                                                 │
+│  eBird API → Species observations (2017, Continental USA)      │
+│  USDA Website → Agricultural census data (County level)        │
+└────────────────────────────┬────────────────────────────────────┘
+                             ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                  DATA ENGINEERING PIPELINE                      │
+│                                                                 │
+│  1. Data extraction and cleaning                               │
+│  2. Geographic alignment (FIPS codes)                          │
+│  3. Schema design (Star schema)                                │
+│  4. ETL implementation (Python + PostgreSQL)                   │
+│  5. Data validation and quality checks                         │
+└────────────────────────────┬────────────────────────────────────┘
+                             ↓
+┌─────────────────────────────────────────────────────────────────┐
+│          EXPLORATORY DATA ANALYSIS (scoping_and_EDA.ipynb)     │
+│                                                                 │
+│  1. Structural assessment and feature characterization         │
+│  2. Outlier detection and missing data imputation             │
+│  3. Preliminary correlation analysis                           │
+│  4. Trend visualization                                        │
+│  5. Research question formulation                              │
+└────────────────────────────┬────────────────────────────────────┘
+                             ↓
+┌─────────────────────────────────────────────────────────────────┐
+│      STATISTICAL ANALYSIS (analytics_implementation.ipynb)     │
+│                                                                 │
+│  Research Question 1: Habitat Preference Analysis              │
+│    → Correlation analysis (species vs. land use types)        │
+│    → Linear regression models                                  │
+│                                                                 │
+│  Research Question 2: Chemical Treatment Impact                │
+│    → Correlation analysis (species vs. chemical usage)        │
+│    → Regression modeling with agricultural chemicals           │
+│                                                                 │
+│  Research Question 3: Conservation Program Efficacy            │
+│    → Comparison of observation counts in high vs. low         │
+│      conservation enrollment counties                          │
+│    → Statistical significance testing                          │
+│                                                                 │
+│  Research Question 4: Species Co-occurrence Patterns           │
+│    → Network analysis of species associations                  │
+│    → Community detection algorithms                            │
+│    → Centrality measures and cluster identification            │
+└────────────────────────────┬────────────────────────────────────┘
+                             ↓
+                  RESULTS INTERPRETATION
+                  CONSERVATION RECOMMENDATIONS
+```
+
+---
+
+## Key Findings and Implications
+
+All analytical results, visualizations, hypothesis testing, and detailed interpretation are contained within `analytics_implementation.ipynb`. The notebook provides:
+
+- Statistical evidence for each research question
+- Visualizations of relationships between variables
+- Model performance metrics and validation
+- Discussion of biological and conservation implications
+- Recommendations for policymakers and conservation organizations
+
+---
+
+## Data Limitations and Future Work
+
+### Known Limitations
+
+**Sampling Bias**
+The eBird dataset contains inherent bias reflecting human population distribution and observer participation. Counties with more active eBird contributors will appear to have higher bird populations, independent of actual population density. This observational bias significantly impacts correlation strength and model performance.
+
+**Temporal Scope**
+Analysis is limited to the year 2017, preventing:
+- Time series analysis of population trends
+- Assessment of year-over-year changes in response to agricultural practices
+- Evaluation of lagged effects of conservation interventions
+
+**Geographic Scope**
+Continental USA focus excludes:
+- Migratory patterns extending to Canada and Mexico
+- Breeding grounds outside the study area
+- Wintering habitats for migratory species
+
+**Species Coverage**
+Only 16 species were included based on conservation priority. A complete dataset including all sampling events would provide more robust population estimates but would substantially increase computational requirements.
+
+### Future Enhancements
+
+**Addressing Observational Bias**
+- Weight models by the number of unique eBird observer IDs per county
+- Incorporate eBird effort metrics (observer hours, distance traveled)
+- Develop correction factors for sampling intensity
+
+**Temporal Expansion**
+- Multi-year dataset construction enabling time series analysis
+- Lagged regression models to assess delayed effects of agricultural changes
+- Trend analysis of population trajectories
+
+**Enhanced Computational Infrastructure**
+- Migration to cloud-based high-performance computing for larger datasets
+- Optimization of ETL pipelines for expanded temporal/geographic scope
+- Implementation of distributed computing frameworks
+
+**Advanced Analytical Methods**
+- Machine learning models for population prediction
+- Geospatial analysis of habitat connectivity
+- Bayesian hierarchical models accounting for nested geographic structures
+
+---
+
+## Technical Requirements
+
+**Programming Languages:**
+- Python (primary analysis)
+- SQL (PostgreSQL for data engineering)
+
+**Key Libraries:**
+- pandas (data manipulation)
+- numpy (numerical computing)
+- matplotlib/seaborn (visualization)
+- scikit-learn (statistical modeling)
+- networkx (network analysis)
+- scipy (statistical testing)
+
+**Infrastructure:**
+- PostgreSQL database for star schema implementation
+- Jupyter Notebook environment for interactive analysis
+- AWS (used for initial dataset construction)
+
+---
+
+## Data Access
+
+**IMPORTANT NOTE:** The dataset exceeds GitHub file size limits and cannot be hosted in this repository.
+
+**To obtain the data files used in this analysis, please contact:**
+ma3775@drexel.edu
+
+---
+
+## Project Context
+
+This analysis was completed as a capstone project for DSCI 521 (Drexel University) and represents a continuation of data engineering work completed as part of the Udacity Data Engineering nanodegree. The project demonstrates the application of statistical analysis, machine learning, and network analysis techniques to real-world conservation challenges.
+
+---
+
+## License
+
+MIT License
+
+Copyright (c) 2025 [Your Name]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Citation
+
+If you use this analysis or dataset in your work, please cite:
+
+```
+Mike Andersen. (2025). Grassland Bird Population Analytics: Agricultural Impact Assessment.
+Drexel University DSCI 521 Capstone Project.
+https://github.com/[your-username]/drexel-capstone-avian-grassland-habitat-loss-analytics-project
+```
+
+---
+
+## Contact
+
+For questions, collaboration opportunities, or data access requests:
+
+**Email:** mikeandersen622@gmail.com  
